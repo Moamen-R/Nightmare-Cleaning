@@ -14,15 +14,32 @@ from .modules.browser_cache import BrowserCacheCleaner
 from .modules.recycle_bin import RecycleBinCleaner
 from .modules.prefetch import PrefetchCleaner
 from .modules.thumbnail_cache import ThumbnailCacheCleaner
+from .modules.windows_update import WindowsUpdateCacheCleaner
+from .modules.error_reports import WindowsErrorReportsCleaner
+from .modules.windows_logs import WindowsLogsCleaner
+from .modules.delivery_optimization import DeliveryOptimizationCleaner
+from .modules.disk_cleanup import DiskCleanupCleaner
+from .modules.dns_cache import DNSCacheCleaner
+from .modules.store_cache import WindowsStoreCacheCleaner
+from .modules.windows_temp import WindowsTempCleaner
+from .modules.user_temp import UserTempCleaner
 
 
 # Available cleaning modules
 CLEANING_MODULES = {
-    'temp': TempFilesCleaner,
+    'windows-temp': WindowsTempCleaner,
+    'user-temp': UserTempCleaner,
     'browser': BrowserCacheCleaner,
-    'recycle': RecycleBinCleaner,
+    'windows-update': WindowsUpdateCacheCleaner,
     'prefetch': PrefetchCleaner,
+    'recycle': RecycleBinCleaner,
+    'error-reports': WindowsErrorReportsCleaner,
     'thumbnails': ThumbnailCacheCleaner,
+    'logs': WindowsLogsCleaner,
+    'delivery-optimization': DeliveryOptimizationCleaner,
+    'disk-cleanup': DiskCleanupCleaner,
+    'dns-cache': DNSCacheCleaner,
+    'store-cache': WindowsStoreCacheCleaner,
 }
 
 
@@ -132,7 +149,7 @@ def scan(module, scan_all):
     print_section_header("SCAN RESULTS")
     print_stats_table(stats)
 
-    print_info("\nUse 'nightmare-cleaner clean' to remove these items")
+    print_info("\nUse 'nightmare clean' to remove these items")
 
 
 @main.command()
@@ -229,7 +246,7 @@ def modules():
         table.add_row(mod_id, cleaner.description)
 
     console.print(table)
-    print_info("\nUse --module or -m to specify modules: nightmare-cleaner scan -m temp -m browser")
+    print_info("\nUse --module or -m to specify modules: nightmare scan -m temp -m browser")
 
 
 if __name__ == '__main__':

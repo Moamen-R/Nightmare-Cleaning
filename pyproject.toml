@@ -29,7 +29,7 @@ dependencies = [
 ]
 
 [project.scripts]
-nightmare-cleaner = "nightmare_cleaner.cli:main"
+nightmare = "nightmare_cleaner.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/Moamen-R/Nightmare-Cleaning"
