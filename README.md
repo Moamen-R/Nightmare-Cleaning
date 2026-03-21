@@ -22,11 +22,19 @@ Nightmare Cleaner includes the following cleaning modules:
 
 | Module | Description |
 |--------|-------------|
-| **temp** | Temporary files and folders |
-| **browser** | Browser cache and temporary internet files |
-| **recycle** | Recycle Bin contents |
+| **windows-temp** | Windows system temporary files |
+| **user-temp** | User temporary files and folders |
+| **browser** | Browser cache and temporary internet files (Chrome, Edge, Firefox) |
+| **windows-update** | Windows Update cache |
 | **prefetch** | Windows Prefetch files |
+| **recycle** | Recycle Bin contents |
+| **error-reports** | Windows Error Reports |
 | **thumbnails** | Windows thumbnail cache |
+| **logs** | Windows Log files |
+| **delivery-optimization** | Delivery Optimization cache |
+| **disk-cleanup** | Run Windows Disk Cleanup utility |
+| **dns-cache** | Clear DNS cache |
+| **store-cache** | Windows Store cache |
 
 ## 🚀 Installation
 
@@ -63,19 +71,19 @@ pip install click colorama psutil rich
 #### Display Help
 
 ```bash
-nightmare-cleaner --help
+nightmare --help
 ```
 
 #### Show Version
 
 ```bash
-nightmare-cleaner --version
+nightmare --version
 ```
 
 #### Display System Information
 
 ```bash
-nightmare-cleaner info
+nightmare info
 ```
 
 Shows detailed information about:
@@ -87,7 +95,7 @@ Shows detailed information about:
 #### List Available Modules
 
 ```bash
-nightmare-cleaner modules
+nightmare modules
 ```
 
 ### Scanning
@@ -95,19 +103,19 @@ nightmare-cleaner modules
 #### Scan All Modules
 
 ```bash
-nightmare-cleaner scan --all
+nightmare scan --all
 ```
 
 #### Scan Specific Modules
 
 ```bash
-nightmare-cleaner scan -m temp -m browser
+nightmare scan -m windows-temp -m browser
 ```
 
 #### Scan Single Module
 
 ```bash
-nightmare-cleaner scan -m temp
+nightmare scan -m user-temp
 ```
 
 ### Cleaning
@@ -115,25 +123,25 @@ nightmare-cleaner scan -m temp
 #### Clean All (with confirmation)
 
 ```bash
-nightmare-cleaner clean --all
+nightmare clean --all
 ```
 
 #### Clean Specific Modules
 
 ```bash
-nightmare-cleaner clean -m temp -m browser
+nightmare clean -m windows-temp -m browser
 ```
 
 #### Dry Run (Preview Only)
 
 ```bash
-nightmare-cleaner clean --all --dry-run
+nightmare clean --all --dry-run
 ```
 
 #### Clean Without Confirmation
 
 ```bash
-nightmare-cleaner clean --all -y
+nightmare clean --all -y
 ```
 
 ## 🎨 Screenshots
@@ -168,11 +176,19 @@ nightmare-cleaner/
 │   ├── system_info.py           # System information utilities
 │   └── modules/
 │       ├── __init__.py          # Base cleaning module
-│       ├── temp_cleaner.py      # Temporary files cleaner
+│       ├── windows_temp.py      # Windows temp files cleaner
+│       ├── user_temp.py         # User temp files cleaner
 │       ├── browser_cache.py     # Browser cache cleaner
-│       ├── recycle_bin.py       # Recycle bin cleaner
+│       ├── windows_update.py    # Windows Update cache cleaner
 │       ├── prefetch.py          # Prefetch cleaner
-│       └── thumbnail_cache.py   # Thumbnail cache cleaner
+│       ├── recycle_bin.py       # Recycle bin cleaner
+│       ├── error_reports.py     # Error reports cleaner
+│       ├── thumbnail_cache.py   # Thumbnail cache cleaner
+│       ├── windows_logs.py      # Windows logs cleaner
+│       ├── delivery_optimization.py  # Delivery Optimization cleaner
+│       ├── disk_cleanup.py      # Disk Cleanup utility runner
+│       ├── dns_cache.py         # DNS cache cleaner
+│       └── store_cache.py       # Windows Store cache cleaner
 ├── setup.py                     # Setup configuration
 ├── pyproject.toml              # Project metadata
 ├── requirements.txt            # Dependencies
