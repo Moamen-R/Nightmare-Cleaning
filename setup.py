@@ -33,7 +33,7 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "nightmare-cleaner=nightmare_cleaner.cli:main",
+            "nightmare=nightmare_cleaner.cli:main",
         ],
     },
 )
