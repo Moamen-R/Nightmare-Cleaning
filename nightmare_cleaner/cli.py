@@ -1,0 +1,236 @@
+"""
+Main CLI interface for Nightmare Cleaner
+"""
+import click
+import sys
+from .ui import (
+    print_banner, print_section_header, print_info, print_success,
+    print_warning, print_error, create_progress_bar, print_stats_table,
+    create_table, console, confirm_action, format_size
+)
+from .system_info import get_system_info, get_disk_info, get_memory_info, is_admin
+from .modules.temp_cleaner import TempFilesCleaner
+from .modules.browser_cache import BrowserCacheCleaner
+from .modules.recycle_bin import RecycleBinCleaner
+from .modules.prefetch import PrefetchCleaner
+from .modules.thumbnail_cache import ThumbnailCacheCleaner
+
+
+# Available cleaning modules
+CLEANING_MODULES = {
+    'temp': TempFilesCleaner,
+    'browser': BrowserCacheCleaner,
+    'recycle': RecycleBinCleaner,
+    'prefetch': PrefetchCleaner,
+    'thumbnails': ThumbnailCacheCleaner,
+}
+
+
+@click.group(invoke_without_command=True)
+@click.option('--version', is_flag=True, help='Show version information')
+@click.pass_context
+def main(ctx, version):
+    """
+    Nightmare Cleaner - A modular, high-performance Windows Cleaner and Optimizer
+
+    A beautiful purple/magenta themed CLI tool for cleaning and optimizing Windows systems.
+    """
+    if version:
+        from . import __version__
+        console.print(f"[title]Nightmare Cleaner v{__version__}[/title]")
+        return
+
+    if ctx.invoked_subcommand is None:
+        print_banner()
+        console.print("[info]Use --help to see available commands[/info]\n")
+
+
+@main.command()
+def info():
+    """Display system information"""
+    print_banner()
+    print_section_header("SYSTEM INFORMATION")
+
+    # System info
+    sys_info = get_system_info()
+    table = create_table("System Details", ["Property", "Value"])
+    table.add_row("Operating System", f"{sys_info['os']} {sys_info['os_release']}")
+    table.add_row("Version", sys_info['os_version'])
+    table.add_row("Architecture", sys_info['architecture'])
+    table.add_row("Processor", sys_info['processor'])
+    table.add_row("Hostname", sys_info['hostname'])
+    table.add_row("Python Version", sys_info['python_version'])
+    table.add_row("Administrator", "Yes" if is_admin() else "No")
+    console.print(table)
+
+    # Memory info
+    print_section_header("MEMORY INFORMATION")
+    mem_info = get_memory_info()
+    if mem_info:
+        table = create_table("Memory Usage", ["Property", "Value"])
+        table.add_row("Total", format_size(mem_info['total']))
+        table.add_row("Used", format_size(mem_info['used']))
+        table.add_row("Available", format_size(mem_info['available']))
+        table.add_row("Usage", f"{mem_info['percent']}%")
+        console.print(table)
+
+    # Disk info
+    print_section_header("DISK INFORMATION")
+    disk_info = get_disk_info()
+    if disk_info:
+        table = create_table("Disk Usage", ["Drive", "Type", "Total", "Used", "Free", "Usage"])
+        for device, info in disk_info.items():
+            table.add_row(
+                info['mountpoint'],
+                info['fstype'],
+                format_size(info['total']),
+                format_size(info['used']),
+                format_size(info['free']),
+                f"{info['percent']}%"
+            )
+        console.print(table)
+
+
+@main.command()
+@click.option('--module', '-m', multiple=True, type=click.Choice(list(CLEANING_MODULES.keys())),
+              help='Specific module(s) to scan')
+@click.option('--all', 'scan_all', is_flag=True, help='Scan all modules')
+def scan(module, scan_all):
+    """Scan system for cleanable items"""
+    print_banner()
+
+    # Check admin rights
+    if not is_admin():
+        print_warning("Not running as administrator. Some features may be limited.")
+
+    print_section_header("SCANNING SYSTEM")
+
+    # Determine which modules to scan
+    modules_to_scan = []
+    if scan_all or not module:
+        modules_to_scan = list(CLEANING_MODULES.keys())
+    else:
+        modules_to_scan = list(module)
+
+    stats = {}
+
+    with create_progress_bar("Scanning") as progress:
+        task = progress.add_task("[progress]Analyzing system...", total=len(modules_to_scan))
+
+        for mod_name in modules_to_scan:
+            progress.update(task, description=f"[progress]Scanning {mod_name}...")
+
+            try:
+                cleaner = CLEANING_MODULES[mod_name]()
+                count, size = cleaner.scan()
+                stats[cleaner.description] = {'count': count, 'size': size}
+            except Exception as e:
+                print_error(f"Error scanning {mod_name}: {str(e)}")
+
+            progress.advance(task)
+
+    print_section_header("SCAN RESULTS")
+    print_stats_table(stats)
+
+    print_info("\nUse 'nightmare-cleaner clean' to remove these items")
+
+
+@main.command()
+@click.option('--module', '-m', multiple=True, type=click.Choice(list(CLEANING_MODULES.keys())),
+              help='Specific module(s) to clean')
+@click.option('--all', 'clean_all', is_flag=True, help='Clean all modules')
+@click.option('--dry-run', is_flag=True, help='Simulate cleaning without actually deleting files')
+@click.option('--yes', '-y', is_flag=True, help='Skip confirmation prompt')
+def clean(module, clean_all, dry_run, yes):
+    """Clean system by removing temporary and unnecessary files"""
+    print_banner()
+
+    # Check admin rights
+    if not is_admin():
+        print_warning("Not running as administrator. Some operations may fail.")
+
+    if dry_run:
+        print_info("DRY RUN MODE: No files will be deleted\n")
+
+    # Determine which modules to clean
+    modules_to_clean = []
+    if clean_all or not module:
+        modules_to_clean = list(CLEANING_MODULES.keys())
+    else:
+        modules_to_clean = list(module)
+
+    # First scan to show what will be cleaned
+    print_section_header("ANALYZING SYSTEM")
+    stats = {}
+    cleaners = {}
+
+    with create_progress_bar("Scanning") as progress:
+        task = progress.add_task("[progress]Analyzing...", total=len(modules_to_clean))
+
+        for mod_name in modules_to_clean:
+            progress.update(task, description=f"[progress]Scanning {mod_name}...")
+
+            try:
+                cleaner = CLEANING_MODULES[mod_name]()
+                count, size = cleaner.scan()
+                stats[cleaner.description] = {'count': count, 'size': size}
+                cleaners[mod_name] = cleaner
+            except Exception as e:
+                print_error(f"Error scanning {mod_name}: {str(e)}")
+
+            progress.advance(task)
+
+    print_section_header("ITEMS TO CLEAN")
+    print_stats_table(stats)
+
+    # Ask for confirmation
+    if not yes and not dry_run:
+        if not confirm_action("\nProceed with cleaning?", default=False):
+            print_warning("Cleaning cancelled")
+            return
+
+    # Perform cleaning
+    print_section_header("CLEANING SYSTEM")
+    cleaned_stats = {}
+
+    with create_progress_bar("Cleaning") as progress:
+        task = progress.add_task("[progress]Cleaning...", total=len(cleaners))
+
+        for mod_name, cleaner in cleaners.items():
+            progress.update(task, description=f"[progress]Cleaning {mod_name}...")
+
+            try:
+                count, size = cleaner.clean(dry_run=dry_run)
+                cleaned_stats[cleaner.description] = {'count': count, 'size': size}
+            except Exception as e:
+                print_error(f"Error cleaning {mod_name}: {str(e)}")
+
+            progress.advance(task)
+
+    print_section_header("CLEANING RESULTS")
+    print_stats_table(cleaned_stats)
+
+    if dry_run:
+        print_info("\nDry run completed. No files were deleted.")
+    else:
+        print_success("\nCleaning completed successfully!")
+
+
+@main.command()
+def modules():
+    """List available cleaning modules"""
+    print_banner()
+    print_section_header("AVAILABLE CLEANING MODULES")
+
+    table = create_table("Cleaning Modules", ["Module ID", "Description"])
+
+    for mod_id, mod_class in CLEANING_MODULES.items():
+        cleaner = mod_class()
+        table.add_row(mod_id, cleaner.description)
+
+    console.print(table)
+    print_info("\nUse --module or -m to specify modules: nightmare-cleaner scan -m temp -m browser")
+
+
+if __name__ == '__main__':
+    main()
