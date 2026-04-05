@@ -58,18 +58,19 @@ RESET = Style.RESET_ALL
 def print_banner():
     """Print the Nightmare Cleaner banner"""
     banner = f"""
-{BRIGHT_PURPLE}=================================================================
-|                                                               |
-|              N    N  N  NNNNNNN  N   N  NNNNNNNN              |
-|              NN   N  N  N        N   N     N                  |
-|              N N  N  N  N  NNNN  NNNNN     N                  |
-|              N  N N  N  N     N  N   N     N                  |
-|              N   NN  N  NNNNNNN  N   N     N                  |
-|                                                               |
-|              NIGHTMARE CLEANER & OPTIMIZER v1.0               |
-|              Windows System Cleaner and Optimizer             |
-|                                                               |
-================================================================={RESET}
+{BRIGHT_PURPLE}╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║              ███╗   ██╗██╗ ██████╗ ██╗  ██╗████████╗          ║
+║              ████╗  ██║██║██╔════╝ ██║  ██║╚══██╔══╝          ║
+║              ██╔██╗ ██║██║██║  ███╗███████║   ██║             ║
+║              ██║╚██╗██║██║██║   ██║██╔══██║   ██║             ║
+║              ██║ ╚████║██║╚██████╔╝██║  ██║   ██║             ║
+║              ╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝             ║
+║                                                               ║
+║              NIGHTMARE CLEANER & OPTIMIZER v1.0               ║
+║              Windows System Cleaner and Optimizer             ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝{RESET}
 """
     try:
         print(banner)
