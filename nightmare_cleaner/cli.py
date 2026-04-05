@@ -44,31 +44,32 @@ import time
 PACKAGE_NAME = "nightmare-cleaner"
 
 
+GITHUB_REPO = "Moamen-R/Nightmare-Cleaning"
+
+
 def check_for_update():
-    """Check PyPI for the latest version and upgrade if available."""
+    """Check GitHub releases for the latest version."""
     from . import __version__
 
     console.print(f"\n[bold magenta]Current version:[/bold magenta] v{__version__}")
-    console.print("[info]Checking PyPI for the latest version...[/info]")
+    console.print("[info]Checking GitHub for the latest version...[/info]")
 
     try:
         import json
         from urllib.request import urlopen, Request
-        from urllib.error import URLError
 
-        url = f"https://pypi.org/pypi/{PACKAGE_NAME}/json"
-        req = Request(url, headers={"Accept": "application/json"})
+        url = f"https://api.github.com/repos/{GITHUB_REPO}/releases/latest"
+        req = Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "nightmare-cleaner"})
         with urlopen(req, timeout=10) as response:
             data = json.loads(response.read().decode("utf-8"))
-            latest_version = data["info"]["version"]
+            latest_version = data["tag_name"].lstrip("v")
     except Exception:
-        print_error("Could not reach PyPI. Check your internet connection.")
+        print_error("Could not reach GitHub. Check your internet connection.")
         return
 
     # Compare versions using packaging if available, else simple string compare
     try:
         from packaging.version import Version
-
         is_newer = Version(latest_version) > Version(__version__)
     except ImportError:
         is_newer = latest_version != __version__
@@ -90,17 +91,18 @@ def check_for_update():
         print_warning("Update cancelled.")
         return
 
-    # Perform the upgrade
-    console.print("[info]Upgrading...[/info]")
+    # Perform the upgrade via pip from GitHub
+    console.print("[info]Upgrading from GitHub...[/info]")
     try:
         subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", "--upgrade", PACKAGE_NAME]
+            [sys.executable, "-m", "pip", "install", "--upgrade",
+             f"git+https://github.com/{GITHUB_REPO}.git"]
         )
         print_success(f"Successfully updated to v{latest_version}!")
     except subprocess.CalledProcessError:
         print_error(
             "Update failed. Try running manually:\n"
-            f"  pip install --upgrade {PACKAGE_NAME}"
+            f"  pip install --upgrade git+https://github.com/{GITHUB_REPO}.git"
         )
 
 

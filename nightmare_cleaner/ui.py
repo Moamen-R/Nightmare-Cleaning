@@ -4,6 +4,7 @@ UI utilities for Nightmare Cleaner with purple/magenta theme
 
 import sys
 import io
+from nightmare_cleaner import __version__
 
 # Fix unicode output on Windows
 if sys.platform == "nt":
@@ -67,7 +68,7 @@ def print_banner():
 ║              ██║ ╚████║██║╚██████╔╝██║  ██║   ██║             ║
 ║              ╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝             ║
 ║                                                               ║
-║              NIGHTMARE CLEANER & OPTIMIZER v1.0               ║
+║              NIGHTMARE CLEANER & OPTIMIZER v{__version__:<8}               ║
 ║              Windows System Cleaner and Optimizer             ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝{RESET}
