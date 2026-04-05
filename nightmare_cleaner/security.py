@@ -110,8 +110,8 @@ def is_safe_extension(path: Union[str, Path]) -> bool:
 
 
 def sanitize_input(user_input: str) -> str:
-    """Sanitize user input to prevent injection attacks"""
-    if not user_input:
-        return ""
-    # Remove any characters that aren't alphanumeric, space, or basic punctuation
-    return re.sub(r"[^\w\s\-\.\_]", "", str(user_input))
+    """Normalize user confirmation input to lowercase stripped string.
+
+    Only used for yes/no confirmation prompts — no regex needed.
+    """
+    return str(user_input).strip().lower()

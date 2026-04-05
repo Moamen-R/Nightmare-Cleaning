@@ -36,6 +36,8 @@ from .modules.user_temp import UserTempCleaner
 from .modules.memory_cleaner import MemoryCleaner
 from .modules.font_cache import FontCacheCleaner
 from .security import sanitize_input
+from .audit_logger import log_session_start, log_session_end
+import time
 
 
 # Available cleaning modules
@@ -55,6 +57,17 @@ CLEANING_MODULES = {
     "store-cache": WindowsStoreCacheCleaner,
     "memory": MemoryCleaner,
     "font-cache": FontCacheCleaner,
+}
+
+# Modules that require administrator privileges
+PRIVILEGED_MODULES = {
+    "prefetch",
+    "windows-temp",
+    "windows-update",
+    "logs",
+    "dns-cache",
+    "disk-cleanup",
+    "recycle",
 }
 
 
@@ -167,7 +180,9 @@ def scan(module, scan_all):
                 count, size = cleaner.scan()
                 stats[cleaner.description] = {"count": count, "size": size}
             except Exception as e:
-                print_error(f"Error scanning {mod_name}: {str(e)}")
+                # Sanitize exception message to avoid leaking system paths
+                error_msg = str(e).split(":")[0] if ":" in str(e) else str(e)
+                print_error(f"Error scanning {mod_name}: {error_msg}")
 
             progress.advance(task)
 
@@ -214,6 +229,22 @@ def clean(module, clean_all, dry_run, secure, yes):
     else:
         modules_to_clean = list(module)
 
+    # Block privileged modules when not running as admin
+    if not is_admin():
+        skipped = []
+        filtered = []
+        for mod_name in modules_to_clean:
+            if mod_name in PRIVILEGED_MODULES:
+                skipped.append(mod_name)
+            else:
+                filtered.append(mod_name)
+        if skipped:
+            print_warning(
+                f"Skipping {len(skipped)} module(s) requiring admin: "
+                + ", ".join(skipped)
+            )
+        modules_to_clean = filtered
+
     # First scan to show what will be cleaned
     print_section_header("ANALYZING SYSTEM")
     stats = {}
@@ -231,7 +262,9 @@ def clean(module, clean_all, dry_run, secure, yes):
                 stats[cleaner.description] = {"count": count, "size": size}
                 cleaners[mod_name] = cleaner
             except Exception as e:
-                print_error(f"Error scanning {mod_name}: {str(e)}")
+                # Sanitize exception message to avoid leaking system paths
+                error_msg = str(e).split(":")[0] if ":" in str(e) else str(e)
+                print_error(f"Error scanning {mod_name}: {error_msg}")
 
             progress.advance(task)
 
@@ -250,6 +283,10 @@ def clean(module, clean_all, dry_run, secure, yes):
     # Perform cleaning
     print_section_header("CLEANING SYSTEM")
     cleaned_stats = {}
+    session_start = time.time()
+
+    # Log session start
+    log_session_start(modules_to_clean, dry_run, secure)
 
     with create_progress_bar("Cleaning") as progress:
         task = progress.add_task("[progress]Cleaning...", total=len(cleaners))
@@ -261,9 +298,17 @@ def clean(module, clean_all, dry_run, secure, yes):
                 count, size = cleaner.clean(dry_run=dry_run, secure=secure)
                 cleaned_stats[cleaner.description] = {"count": count, "size": size}
             except Exception as e:
-                print_error(f"Error cleaning {mod_name}: {str(e)}")
+                # Sanitize exception message to avoid leaking system paths
+                error_msg = str(e).split(":")[0] if ":" in str(e) else str(e)
+                print_error(f"Error cleaning {mod_name}: {error_msg}")
 
             progress.advance(task)
+
+    # Log session end
+    duration = time.time() - session_start
+    total_cleaned = sum(d.get("count", 0) for d in cleaned_stats.values())
+    total_size = sum(d.get("size", 0) for d in cleaned_stats.values())
+    log_session_end(total_cleaned, total_size, duration)
 
     print_section_header("CLEANING RESULTS")
     print_stats_table(cleaned_stats)

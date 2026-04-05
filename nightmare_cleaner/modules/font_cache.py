@@ -48,8 +48,8 @@ class FontCacheCleaner(CleaningModule):
                 continue
 
             try:
-                # Get all .dat files in the cache directories
-                search_pattern = os.path.join(cache_dir, "**", "*.dat")
+                # Get only known font cache .dat files (not all .dat files)
+                search_pattern = os.path.join(cache_dir, "**", "FntCache_*.dat")
                 for filepath in glob.glob(search_pattern, recursive=True):
                     try:
                         size = self.get_file_size(filepath)

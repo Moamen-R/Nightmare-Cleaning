@@ -1,22 +1,19 @@
 @echo off
 setlocal
-:: Request administrative privileges
+
+:: Check for administrative privileges using PowerShell (no temp files)
 >nul 2>&1 "%SYSTEMROOT%\system32\cacls.exe" "%SYSTEMROOT%\system32\config\system"
 if '%errorlevel%' NEQ '0' (
     echo Requesting administrative privileges...
-    goto UACPrompt
-) else ( goto gotAdmin )
-
-:UACPrompt
-    echo Set UAC = CreateObject^("Shell.Application"^) > "%temp%\getadmin.vbs"
-    echo UAC.ShellExecute "%~s0", "", "", "runas", 1 >> "%temp%\getadmin.vbs"
-    "%temp%\getadmin.vbs"
-    del "%temp%\getadmin.vbs"
+    :: Use PowerShell Start-Process -Verb RunAs instead of VBScript
+    :: This avoids the race condition of writing a .vbs to %temp%
+    powershell -Command "Start-Process '%~f0' -Verb RunAs -ArgumentList '-Elevated'"
     exit /B
+)
 
 :gotAdmin
-    pushd "%CD%"
-    CD /D "%~dp0"
+pushd "%CD%"
+CD /D "%~dp0"
 
 echo Nightmare Cleaner - Installation
 echo =================================
