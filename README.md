@@ -38,13 +38,21 @@ Nightmare Cleaner includes the following cleaning modules:
 
 ## 🚀 Installation
 
-### Prerequisites
+### One-Command Installation (Recommended)
 
-- Python 3.8 or higher
-- Windows operating system
-- Administrator privileges (recommended)
+To install Nightmare Cleaner with a single command, open an Administrator prompt (CMD or PowerShell) in the root directory:
 
-### Install from Source
+```cmd
+install.bat
+```
+*(This automatically elevates privileges, checks for Python, and installs the CLI).*
+
+Alternatively, using PowerShell:
+```powershell
+.\install.ps1 -InstallPython
+```
+
+### Manual Installation
 
 ```bash
 # Clone the repository

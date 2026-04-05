@@ -1,6 +1,7 @@
 """
 Browser cache cleaning module
 """
+
 import os
 from pathlib import Path
 from typing import Tuple
@@ -18,17 +19,58 @@ class BrowserCacheCleaner(CleaningModule):
     def _get_cache_locations(self):
         """Get browser cache locations"""
         locations = []
-        if os.name == 'nt':
-            local_appdata = os.environ.get('LOCALAPPDATA', '')
+        if os.name == "nt":
+            local_appdata = os.environ.get("LOCALAPPDATA", "")
             if local_appdata:
                 # Chrome
-                locations.append(os.path.join(local_appdata, 'Google', 'Chrome', 'User Data', 'Default', 'Cache'))
+                locations.append(
+                    os.path.join(
+                        local_appdata,
+                        "Google",
+                        "Chrome",
+                        "User Data",
+                        "Default",
+                        "Cache",
+                    )
+                )
                 # Firefox
-                locations.append(os.path.join(local_appdata, 'Mozilla', 'Firefox', 'Profiles'))
+                locations.append(
+                    os.path.join(local_appdata, "Mozilla", "Firefox", "Profiles")
+                )
                 # Edge
-                locations.append(os.path.join(local_appdata, 'Microsoft', 'Edge', 'User Data', 'Default', 'Cache'))
+                locations.append(
+                    os.path.join(
+                        local_appdata,
+                        "Microsoft",
+                        "Edge",
+                        "User Data",
+                        "Default",
+                        "Cache",
+                    )
+                )
                 # Opera
-                locations.append(os.path.join(local_appdata, 'Opera Software', 'Opera Stable', 'Cache'))
+                locations.append(
+                    os.path.join(
+                        local_appdata, "Opera Software", "Opera Stable", "Cache"
+                    )
+                )
+                # Brave
+                locations.append(
+                    os.path.join(
+                        local_appdata,
+                        "BraveSoftware",
+                        "Brave-Browser",
+                        "User Data",
+                        "Default",
+                        "Cache",
+                    )
+                )
+                # Vivaldi
+                locations.append(
+                    os.path.join(
+                        local_appdata, "Vivaldi", "User Data", "Default", "Cache"
+                    )
+                )
         return [loc for loc in locations if os.path.exists(loc)]
 
     def scan(self) -> Tuple[int, int]:
@@ -54,7 +96,7 @@ class BrowserCacheCleaner(CleaningModule):
 
         return self.total_count, self.total_size
 
-    def clean(self, dry_run=False) -> Tuple[int, int]:
+    def clean(self, dry_run=False, secure=False) -> Tuple[int, int]:
         """Clean browser caches"""
         cleaned_count = 0
         cleaned_size = 0
@@ -62,7 +104,7 @@ class BrowserCacheCleaner(CleaningModule):
         for filepath in self.files_to_clean:
             try:
                 size = self.get_file_size(filepath)
-                if self.safe_delete(filepath, dry_run):
+                if self.safe_delete(filepath, dry_run=dry_run, secure=secure):
                     cleaned_count += 1
                     cleaned_size += size
             except (PermissionError, OSError):

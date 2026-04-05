@@ -46,7 +46,7 @@ class RecycleBinCleaner(CleaningModule):
 
         return self.total_count, self.total_size
 
-    def clean(self, dry_run=False) -> Tuple[int, int]:
+    def clean(self, dry_run=False, secure=False) -> Tuple[int, int]:
         """Empty the recycle bin"""
         if dry_run:
             return self.total_count, self.total_size

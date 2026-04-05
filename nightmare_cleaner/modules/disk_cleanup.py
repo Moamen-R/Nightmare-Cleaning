@@ -27,7 +27,7 @@ class DiskCleanupCleaner(CleaningModule):
 
         return self.total_count, self.total_size
 
-    def clean(self, dry_run=False) -> Tuple[int, int]:
+    def clean(self, dry_run=False, secure=False) -> Tuple[int, int]:
         """Run Disk Cleanup utility"""
         if dry_run or not self.can_run:
             return self.total_count, self.total_size

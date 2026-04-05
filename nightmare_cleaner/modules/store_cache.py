@@ -27,7 +27,7 @@ class WindowsStoreCacheCleaner(CleaningModule):
 
         return self.total_count, self.total_size
 
-    def clean(self, dry_run=False) -> Tuple[int, int]:
+    def clean(self, dry_run=False, secure=False) -> Tuple[int, int]:
         """Clear Windows Store cache"""
         if dry_run or not self.can_run:
             return self.total_count, self.total_size

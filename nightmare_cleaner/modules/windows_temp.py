@@ -42,7 +42,7 @@ class WindowsTempCleaner(CleaningModule):
 
         return self.total_count, self.total_size
 
-    def clean(self, dry_run=False) -> Tuple[int, int]:
+    def clean(self, dry_run=False, secure=False) -> Tuple[int, int]:
         """Clean Windows temporary files"""
         cleaned_count = 0
         cleaned_size = 0
@@ -50,7 +50,7 @@ class WindowsTempCleaner(CleaningModule):
         for filepath in self.files_to_clean:
             try:
                 size = self.get_file_size(filepath)
-                if self.safe_delete(filepath, dry_run):
+                if self.safe_delete(filepath, dry_run=dry_run, secure=secure):
                     cleaned_count += 1
                     cleaned_size += size
             except (PermissionError, OSError):
