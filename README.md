@@ -288,18 +288,6 @@ This tool performs file deletion operations. While it includes safety features, 
 - Keep backups of important data
 - Run with appropriate privileges
 
-## 🌟 Acknowledgments
-
-- Built with [Click](https://click.palletsprojects.com/) for the CLI framework
-- Styled with [Rich](https://rich.readthedocs.io/) for beautiful terminal output
-- System monitoring via [psutil](https://github.com/giampaolo/psutil)
-
-## 📞 Support
-
-For issues, questions, or contributions, please visit:
-- [GitHub Issues](https://github.com/Moamen-R/Nightmare-Cleaning/issues)
-- [GitHub Repository](https://github.com/Moamen-R/Nightmare-Cleaning)
-
 ---
 
-**Made with 💜 by Moamen-R**
+**Made with 💜 by Moamen-R & [Mahmoud Osama](https://github.com/mahmoud25osama)**
