@@ -176,7 +176,7 @@ nightmare clean --all -y
 ║              ██║ ╚████║██║╚██████╔╝██║  ██║   ██║             ║
 ║              ╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝             ║
 ║                                                               ║
-║              NIGHTMARE CLEANER & OPTIMIZER v1.0               ║
+║              NIGHTMARE CLEANER & OPTIMIZER v1.1.0             ║
 ║              Windows System Cleaner and Optimizer             ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
