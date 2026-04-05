@@ -15,6 +15,7 @@ A modular, high-performance Windows Cleaner and Optimizer CLI tool built with Py
 - **🔒 Safe Operations**: Dry-run mode to preview actions before execution
 - **💪 Administrator Detection**: Automatic detection of privilege levels
 - **📈 System Information**: Detailed system, memory, and disk usage information
+- **🔄 Self-Update**: Check for and install the latest version directly from the CLI
 
 ## 🎯 Cleaning Modules
 
@@ -87,6 +88,16 @@ nightmare --help
 ```bash
 nightmare --version
 ```
+
+#### Check for Updates
+
+```bash
+nightmare -u
+# or
+nightmare --update
+```
+
+Checks PyPI for the latest published version. If a newer version is available, you will be prompted to confirm the upgrade. The tool automatically downloads and installs the update via `pip`.
 
 #### Display System Information
 
