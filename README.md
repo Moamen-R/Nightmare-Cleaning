@@ -290,4 +290,4 @@ This tool performs file deletion operations. While it includes safety features, 
 
 ---
 
-**Made with 💜 by [Moamen-R](https://github.com/Moamen-R) & [Mahmoud Osama](https://github.com/mahmoud25osama)**
+**Made with 💜 by [Moamen-R](https://github.com/Moamen-R) & [Mahmoud Osama](https://github.com/Mahmud-O)**
