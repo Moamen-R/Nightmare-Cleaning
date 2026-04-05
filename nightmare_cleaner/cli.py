@@ -4,6 +4,7 @@ Main CLI interface for Nightmare Cleaner
 
 import click
 import sys
+import subprocess
 from .ui import (
     print_banner,
     print_section_header,
@@ -40,6 +41,69 @@ from .audit_logger import log_session_start, log_session_end
 import time
 
 
+PACKAGE_NAME = "nightmare-cleaner"
+
+
+def check_for_update():
+    """Check PyPI for the latest version and upgrade if available."""
+    from . import __version__
+
+    console.print(f"\n[bold magenta]Current version:[/bold magenta] v{__version__}")
+    console.print("[info]Checking PyPI for the latest version...[/info]")
+
+    try:
+        import json
+        from urllib.request import urlopen, Request
+        from urllib.error import URLError
+
+        url = f"https://pypi.org/pypi/{PACKAGE_NAME}/json"
+        req = Request(url, headers={"Accept": "application/json"})
+        with urlopen(req, timeout=10) as response:
+            data = json.loads(response.read().decode("utf-8"))
+            latest_version = data["info"]["version"]
+    except Exception:
+        print_error("Could not reach PyPI. Check your internet connection.")
+        return
+
+    # Compare versions using packaging if available, else simple string compare
+    try:
+        from packaging.version import Version
+
+        is_newer = Version(latest_version) > Version(__version__)
+    except ImportError:
+        is_newer = latest_version != __version__
+
+    if not is_newer:
+        print_success(
+            f"You are already on the latest version (v{__version__}). No update needed."
+        )
+        return
+
+    console.print(
+        f"[bold green]New version available:[/bold green] v{latest_version} "
+        f"(installed: v{__version__})"
+    )
+
+    # Ask for confirmation
+    user_input = input("\nDo you want to update now? [y/N]: ").strip().lower()
+    if user_input not in ("y", "yes"):
+        print_warning("Update cancelled.")
+        return
+
+    # Perform the upgrade
+    console.print("[info]Upgrading...[/info]")
+    try:
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "--upgrade", PACKAGE_NAME]
+        )
+        print_success(f"Successfully updated to v{latest_version}!")
+    except subprocess.CalledProcessError:
+        print_error(
+            "Update failed. Try running manually:\n"
+            f"  pip install --upgrade {PACKAGE_NAME}"
+        )
+
+
 # Available cleaning modules
 CLEANING_MODULES = {
     "windows-temp": WindowsTempCleaner,
@@ -73,8 +137,9 @@ PRIVILEGED_MODULES = {
 
 @click.group(invoke_without_command=True)
 @click.option("--version", is_flag=True, help="Show version information")
+@click.option("--update", "-u", is_flag=True, help="Check for updates and upgrade to the latest version")
 @click.pass_context
-def main(ctx, version):
+def main(ctx, version, update):
     """
     Nightmare Cleaner - A modular, high-performance Windows Cleaner and Optimizer
 
@@ -84,6 +149,11 @@ def main(ctx, version):
         from . import __version__
 
         console.print(f"[title]Nightmare Cleaner v{__version__}[/title]")
+        return
+
+    if update:
+        print_banner()
+        check_for_update()
         return
 
     if ctx.invoked_subcommand is None:
