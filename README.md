@@ -8,14 +8,14 @@ A modular, high-performance Windows Cleaner and Optimizer CLI tool built with Py
 
 ##  Features
 
-- ** Beautiful Purple/Magenta UI**: Eye-catching terminal interface with rich formatting
-- ** Modular Cleaning System**: Multiple specialized cleaning modules
-- ** High Performance**: Fast scanning and cleaning operations
-- ** Detailed Statistics**: Comprehensive reports on cleaned items and space recovered
-- ** Safe Operations**: Dry-run mode to preview actions before execution
-- ** Administrator Detection**: Automatic detection of privilege levels
-- ** System Information**: Detailed system, memory, and disk usage information
-- ** Self-Update**: Check for and install the latest version directly from the CLI
+- ** Beautiful Purple/Magenta UI**: Eye-catching terminal interface with rich formatting **
+- ** Modular Cleaning System**: Multiple specialized cleaning modules **
+- ** High Performance**: Fast scanning and cleaning operations **
+- ** Detailed Statistics**: Comprehensive reports on cleaned items and space recovered **
+- ** Safe Operations**: Dry-run mode to preview actions before execution **
+- ** Administrator Detection**: Automatic detection of privilege levels **
+- ** System Information**: Detailed system, memory, and disk usage information **
+- ** Self-Update**: Check for and install the latest version directly from the CLI **
 
 ##  Cleaning Modules
 
