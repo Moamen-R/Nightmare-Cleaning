@@ -10,7 +10,8 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Moamen-R", email = "moamen@example.com"}
+    {name = "Moamen-R", email = "moamen@example.com"},
+    {name = "Mahmoud Osama", email = "mahmoud@example.com"}
 ]
 keywords = ["windows", "cleaner", "optimizer", "cli", "system-tools", "security", "cache"]
 classifiers = [

@@ -1,4 +1,4 @@
-# Nightmare Cleaner 🌙✨
+# Nightmare Cleaner 🌙
 
 A modular, high-performance Windows Cleaner and Optimizer CLI tool built with Python, featuring a beautiful purple/magenta themed UI.
 
@@ -6,17 +6,18 @@ A modular, high-performance Windows Cleaner and Optimizer CLI tool built with Py
 ![License](https://img.shields.io/badge/license-MIT-purple.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
 
-## ✨ Features
+##  Features
 
-- **🎨 Beautiful Purple/Magenta UI**: Eye-catching terminal interface with rich formatting
-- **🧹 Modular Cleaning System**: Multiple specialized cleaning modules
-- **⚡ High Performance**: Fast scanning and cleaning operations
-- **📊 Detailed Statistics**: Comprehensive reports on cleaned items and space recovered
-- **🔒 Safe Operations**: Dry-run mode to preview actions before execution
-- **💪 Administrator Detection**: Automatic detection of privilege levels
-- **📈 System Information**: Detailed system, memory, and disk usage information
+- Beautiful Purple/Magenta UI**: Eye-catching terminal interface with rich formatting
+- Modular Cleaning System**: Multiple specialized cleaning modules
+- High Performance**: Fast scanning and cleaning operations
+- Detailed Statistics**: Comprehensive reports on cleaned items and space recovered
+- Safe Operations**: Dry-run mode to preview actions before execution
+- Administrator Detection**: Automatic detection of privilege levels 
+- System Information**: Detailed system, memory, and disk usage information 
+- Self-Update**: Check for and install the latest version directly from the CLI 
 
-## 🎯 Cleaning Modules
+##  Cleaning Modules
 
 Nightmare Cleaner includes the following cleaning modules:
 
@@ -36,7 +37,7 @@ Nightmare Cleaner includes the following cleaning modules:
 | **dns-cache** | Clear DNS cache |
 | **store-cache** | Windows Store cache |
 
-## 🚀 Installation
+##  Installation
 
 ### One-Command Installation (Recommended)
 
@@ -72,7 +73,7 @@ pip install -e .
 pip install click colorama psutil rich
 ```
 
-## 📖 Usage
+##  Usage
 
 ### Basic Commands
 
@@ -87,6 +88,16 @@ nightmare --help
 ```bash
 nightmare --version
 ```
+
+#### Check for Updates
+
+```bash
+nightmare -u
+# or
+nightmare --update
+```
+
+Checks PyPI for the latest published version. If a newer version is available, you will be prompted to confirm the upgrade. The tool automatically downloads and installs the update via `pip`.
 
 #### Display System Information
 
@@ -152,7 +163,7 @@ nightmare clean --all --dry-run
 nightmare clean --all -y
 ```
 
-## 🎨 Screenshots
+##  Screenshots
 
 ### Banner
 ```
@@ -171,7 +182,7 @@ nightmare clean --all -y
 ╚═══════════════════════════════════════════════════════════════╝
 ```
 
-## 🏗️ Architecture
+##  Architecture
 
 ### Project Structure
 
@@ -211,7 +222,7 @@ Each cleaning module inherits from the `CleaningModule` base class and implement
 - `clean()`: Removes identified items (with optional dry-run)
 - `get_stats()`: Returns statistics about the cleaning operation
 
-## 🔧 Development
+##  Development
 
 ### Adding a New Cleaning Module
 
@@ -240,14 +251,14 @@ class MyCustomCleaner(CleaningModule):
         return cleaned_count, cleaned_size
 ```
 
-## 🛡️ Safety Features
+##  Safety Features
 
 - **Dry Run Mode**: Test cleaning operations without deleting files
 - **Administrator Detection**: Warns when not running with elevated privileges
 - **Error Handling**: Graceful handling of permission errors and file locks
 - **Confirmation Prompts**: Asks for confirmation before destructive operations
 
-## 📋 Requirements
+##  Requirements
 
 - Python 3.8+
 - click >= 8.1.7
@@ -255,7 +266,7 @@ class MyCustomCleaner(CleaningModule):
 - psutil >= 5.9.8
 - rich >= 13.7.0
 
-## 🤝 Contributing
+##  Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
@@ -265,11 +276,11 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## ⚠️ Disclaimer
+##  Disclaimer
 
 This tool performs file deletion operations. While it includes safety features, always:
 - Review what will be deleted before confirming
@@ -277,18 +288,6 @@ This tool performs file deletion operations. While it includes safety features, 
 - Keep backups of important data
 - Run with appropriate privileges
 
-## 🌟 Acknowledgments
-
-- Built with [Click](https://click.palletsprojects.com/) for the CLI framework
-- Styled with [Rich](https://rich.readthedocs.io/) for beautiful terminal output
-- System monitoring via [psutil](https://github.com/giampaolo/psutil)
-
-## 📞 Support
-
-For issues, questions, or contributions, please visit:
-- [GitHub Issues](https://github.com/Moamen-R/Nightmare-Cleaning/issues)
-- [GitHub Repository](https://github.com/Moamen-R/Nightmare-Cleaning)
-
 ---
 
-**Made with 💜 by Moamen-R**
+**Made with 💜 by [Moamen-R](https://github.com/Moamen-R) & [Mahmoud Osama](https://github.com/Mahmud-O)**
