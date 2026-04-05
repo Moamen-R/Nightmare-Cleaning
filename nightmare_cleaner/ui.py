@@ -68,7 +68,11 @@ def print_banner():
 ║              ██║ ╚████║██║╚██████╔╝██║  ██║   ██║             ║
 ║              ╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝             ║
 ║                                                               ║
+<<<<<<< HEAD
 ║              NIGHTMARE CLEANER & OPTIMIZER v{__version__:<8}               ║
+=======
+║              NIGHTMARE CLEANER & OPTIMIZER v1.1.0             ║
+>>>>>>> b3022e1d3dd6ab2c326de99436eb655bfc91309f
 ║              Windows System Cleaner and Optimizer             ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝{RESET}
