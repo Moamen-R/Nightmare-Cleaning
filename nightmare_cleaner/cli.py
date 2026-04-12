@@ -36,6 +36,7 @@ from .modules.windows_temp import WindowsTempCleaner
 from .modules.user_temp import UserTempCleaner
 from .modules.memory_cleaner import MemoryCleaner
 from .modules.font_cache import FontCacheCleaner
+from .modules.cdrive_cleaner import CDriveCleaner
 from .security import sanitize_input
 from .audit_logger import log_session_start, log_session_end
 import time
@@ -123,6 +124,7 @@ CLEANING_MODULES = {
     "store-cache": WindowsStoreCacheCleaner,
     "memory": MemoryCleaner,
     "font-cache": FontCacheCleaner,
+    "cdrive": CDriveCleaner,
 }
 
 # Modules that require administrator privileges
@@ -134,6 +136,7 @@ PRIVILEGED_MODULES = {
     "dns-cache",
     "disk-cleanup",
     "recycle",
+    "cdrive",
 }
 
 
