@@ -37,8 +37,9 @@ from .modules.user_temp import UserTempCleaner
 from .modules.memory_cleaner import MemoryCleaner
 from .modules.font_cache import FontCacheCleaner
 from .modules.cdrive_cleaner import CDriveCleaner
+from .modules.uninstaller import ProgramUninstaller
 from .security import sanitize_input
-from .audit_logger import log_session_start, log_session_end
+from .audit_logger import log_session_start, log_session_end, get_logger
 import time
 
 
@@ -410,6 +411,246 @@ def modules():
     print_info(
         "\nUse --module or -m to specify modules: nightmare scan -m temp -m browser"
     )
+
+
+@main.command()
+@click.option("--search", "-s", default=None, help="Filter program list by name keyword")
+@click.option("--yes", "-y", is_flag=True, help="Skip confirmation prompts")
+def uninstall(search, yes):
+    """Interactive program uninstaller with leftover cleanup"""
+    print_banner()
+
+    # Check for Windows
+    if sys.platform != "win32":
+        print_error("The uninstaller is only available on Windows.")
+        return
+
+    # Check admin
+    if not is_admin():
+        print_warning(
+            "Not running as administrator. Some uninstalls may fail."
+        )
+
+    print_section_header("NIGHTMARE UNINSTALLER")
+
+    uninstaller = ProgramUninstaller()
+    audit = get_logger()
+
+    while True:  # Main loop for "uninstall another?"
+        # --- Scan registry ---
+        programs = []
+        with create_progress_bar("Scanning") as progress:
+            task = progress.add_task(
+                "[progress]Scanning installed programs...", total=1
+            )
+            programs = uninstaller.get_installed_programs()
+            progress.advance(task)
+
+        # --- Apply search filter ---
+        if search:
+            safe_search = sanitize_input(search)
+            programs = [
+                p for p in programs
+                if safe_search in p["name"].lower()
+            ]
+
+        # --- Display program table ---
+        if not programs:
+            print_warning("No programs found.")
+            return
+
+        _display_program_table(programs)
+
+        # --- Prompt for selection ---
+        selected = _prompt_program_selection(programs)
+        if selected is None:
+            return
+
+        program = programs[selected]
+
+        # --- Safety check: protected program ---
+        if uninstaller._is_protected(program["name"]):
+            print_error(
+                f"'{program['name']}' is a protected system component and cannot be uninstalled."
+            )
+            continue
+
+        # --- Show confirmation panel ---
+        detail_text = (
+            f"[bright_cyan]Name:[/bright_cyan]       {program['name']}\n"
+            f"[bright_cyan]Publisher:[/bright_cyan]  {program['publisher']}\n"
+            f"[bright_cyan]Size:[/bright_cyan]       {format_size(program['size_bytes'])}\n"
+            f"[bright_cyan]Version:[/bright_cyan]    {program['install_date']}\n"
+            f"[bright_cyan]Location:[/bright_cyan]   {program['install_location'] or 'N/A'}"
+        )
+        from .ui import create_panel
+        console.print(create_panel(detail_text, title="Selected Program"))
+
+        # --- Prompt uninstall mode ---
+        mode = _prompt_uninstall_mode()
+        if mode is None:
+            # Cancel → re-show the table
+            continue
+
+        # --- Confirm before proceeding ---
+        if not yes:
+            mode_label = "Normal" if mode == "normal" else "Force"
+            if not confirm_action(
+                f"Proceed with {mode_label} uninstallation of '{program['name']}'?"
+            ):
+                print_warning("Uninstallation cancelled.")
+                continue
+
+        # --- Execute uninstall ---
+        audit.info(
+            f"ProgramUninstaller | SESSION_START | {program['name']} | mode={mode}"
+        )
+        session_start = time.time()
+
+        results = {"processes_killed": 0, "files_deleted": 0, "registry_removed": 0, "space_freed": 0}
+
+        if mode == "normal":
+            with create_progress_bar("Uninstalling") as progress:
+                task = progress.add_task(
+                    f"[progress]Uninstalling {program['name']}...", total=2
+                )
+
+                success = uninstaller.normal_uninstall(program)
+                progress.advance(task)
+
+                if success:
+                    print_success(f"Normal uninstall of '{program['name']}' completed.")
+                else:
+                    print_warning(
+                        f"Normal uninstall returned a non-zero exit code. "
+                        f"Cleaning leftovers anyway..."
+                    )
+
+                # Always clean leftovers after normal uninstall
+                leftover = uninstaller.clean_leftovers(program)
+                results["files_deleted"] = leftover.get("files_deleted", 0)
+                results["registry_removed"] = leftover.get("registry_removed", 0)
+                results["space_freed"] = leftover.get("space_freed", 0)
+                progress.advance(task)
+
+        elif mode == "force":
+            with create_progress_bar("Force Uninstalling") as progress:
+                task = progress.add_task(
+                    f"[progress]Force removing {program['name']}...", total=1
+                )
+                results = uninstaller.force_uninstall(program)
+                progress.advance(task)
+
+            print_success(f"Force uninstall of '{program['name']}' completed.")
+
+        # --- Show summary panel ---
+        duration = time.time() - session_start
+        mode_label = "Normal" if mode == "normal" else "Force"
+        summary_text = (
+            f"[bright_cyan]Program:[/bright_cyan]          {program['name']}\n"
+            f"[bright_cyan]Mode:[/bright_cyan]             {mode_label}\n"
+            f"[bright_cyan]Processes Killed:[/bright_cyan] {results['processes_killed']}\n"
+            f"[bright_cyan]Files Deleted:[/bright_cyan]    {results['files_deleted']}\n"
+            f"[bright_cyan]Registry Removed:[/bright_cyan] {results['registry_removed']}\n"
+            f"[bright_cyan]Space Freed:[/bright_cyan]      {format_size(results['space_freed'])}\n"
+            f"[bright_cyan]Duration:[/bright_cyan]         {duration:.1f}s"
+        )
+        console.print(create_panel(summary_text, title="Uninstall Summary"))
+
+        # --- Log the operation ---
+        audit.info(
+            f"ProgramUninstaller | SESSION_END | {program['name']} | "
+            f"mode={mode} | killed={results['processes_killed']} | "
+            f"files={results['files_deleted']} | registry={results['registry_removed']} | "
+            f"freed={results['space_freed']} | duration={duration:.1f}s"
+        )
+
+        # --- Ask to uninstall another ---
+        console.print()
+        try:
+            again = input("Uninstall another program? [y/N]: ")
+            if sanitize_input(again) not in ("y", "yes"):
+                print_info("Goodbye! 💀")
+                return
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n")
+            print_info("Goodbye! 💀")
+            return
+
+
+def _display_program_table(programs):
+    """Display installed programs in a numbered Rich table."""
+    table = create_table(
+        "Installed Programs",
+        ["#", "Program Name", "Publisher", "Size", "Version"],
+    )
+
+    for idx, prog in enumerate(programs, 1):
+        table.add_row(
+            str(idx),
+            prog["name"],
+            prog["publisher"],
+            format_size(prog["size_bytes"]),
+            prog["install_date"],
+        )
+
+    console.print(table)
+    console.print(f"\n[info]Total: {len(programs)} programs[/info]\n")
+
+
+def _prompt_program_selection(programs):
+    """
+    Prompt user to select a program by number.
+    Returns the 0-based index, or None to quit.
+    """
+    while True:
+        try:
+            raw = input("Enter program number to select (or 'q' to quit): ")
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n")
+            return None
+
+        choice = sanitize_input(raw)
+        if choice == "q":
+            print_info("Exiting uninstaller.")
+            return None
+
+        try:
+            num = int(choice)
+            if 1 <= num <= len(programs):
+                return num - 1
+            else:
+                print_warning(f"Please enter a number between 1 and {len(programs)}.")
+        except ValueError:
+            print_warning("Invalid input. Enter a number or 'q' to quit.")
+
+
+def _prompt_uninstall_mode():
+    """
+    Prompt user to choose uninstall mode.
+    Returns 'normal', 'force', or None (cancel).
+    """
+    console.print("\n[title]Select uninstall mode:[/title]")
+    console.print("  [bright_cyan]1.[/bright_cyan] Normal Uninstallation - Uses the official uninstaller")
+    console.print("  [bright_cyan]2.[/bright_cyan] Force Uninstallation  - Terminates processes & removes all files")
+    console.print("  [bright_cyan]3.[/bright_cyan] Cancel\n")
+
+    while True:
+        try:
+            raw = input("Enter choice (1/2/3): ")
+        except (KeyboardInterrupt, EOFError):
+            console.print("\n")
+            return None
+
+        choice = sanitize_input(raw)
+        if choice == "1":
+            return "normal"
+        elif choice == "2":
+            return "force"
+        elif choice == "3":
+            return None
+        else:
+            print_warning("Invalid choice. Enter 1, 2, or 3.")
 
 
 if __name__ == "__main__":
