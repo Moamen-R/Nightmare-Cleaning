@@ -154,6 +154,13 @@ class ProgramUninstaller:
         publisher = _get_value(subkey, "Publisher", "Unknown")
         install_location = _get_value(subkey, "InstallLocation", "")
 
+        # Fallback: if registry has no size, calculate from install directory
+        if size_bytes == 0 and install_location and os.path.isdir(install_location):
+            try:
+                size_bytes = self._get_dir_size(install_location)
+            except Exception:
+                size_bytes = 0
+
         # Build full registry key path for later deletion
         registry_key = f"{hive_name}\\{subkey_path}"
 
