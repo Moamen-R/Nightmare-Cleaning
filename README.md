@@ -5,18 +5,19 @@ A modular, high-performance Windows Cleaner and Optimizer CLI tool built with Py
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-purple.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
-![Version](https://img.shields.io/badge/version-1.2.0-brightgreen.svg)
+![Version](https://img.shields.io/badge/version-1.3.0-brightgreen.svg)
 
 ##  Features
 
-- Beautiful Purple/Magenta UI**: Eye-catching terminal interface with rich formatting
-- Modular Cleaning System**: Multiple specialized cleaning modules
-- High Performance**: Fast scanning and cleaning operations
-- Detailed Statistics**: Comprehensive reports on cleaned items and space recovered
-- Safe Operations**: Dry-run mode to preview actions before execution
-- Administrator Detection**: Automatic detection of privilege levels 
-- System Information**: Detailed system, memory, and disk usage information 
-- Self-Update**: Check for and install the latest version directly from the CLI 
+- **Beautiful Purple/Magenta UI**: Eye-catching terminal interface with rich formatting
+- **Modular Cleaning System**: Multiple specialized cleaning modules
+- **High Performance**: Fast scanning and cleaning operations
+- **Detailed Statistics**: Comprehensive reports on cleaned items and space recovered
+- **Safe Operations**: Dry-run mode to preview actions before execution
+- **Administrator Detection**: Automatic detection of privilege levels
+- **System Information**: Detailed system, memory, and disk usage information
+- **Self-Update**: Check for and install the latest version directly from the CLI
+- **Program Uninstaller** 🆕: Interactive uninstaller with normal/force modes and automatic leftover cleanup
 
 ##  Cleaning Modules
 
@@ -167,6 +168,39 @@ nightmare clean --all --dry-run
 nightmare clean --all -y
 ```
 
+### Uninstalling Programs
+
+#### Interactive Uninstaller
+
+```bash
+nightmare uninstall
+```
+
+Launches an interactive session that:
+1. Scans the registry for all installed programs
+2. Displays them in a searchable Rich table
+3. Lets you select a program and choose an uninstall mode
+4. Cleans up all leftover files and registry entries
+
+#### Search for a Specific Program
+
+```bash
+nightmare uninstall -s discord
+```
+
+#### Skip Confirmation Prompts
+
+```bash
+nightmare uninstall -y
+```
+
+#### Uninstall Modes
+
+| Mode | Description |
+|------|-------------|
+| **Normal** | Runs the program's official uninstaller (silent mode for MSI packages) |
+| **Force** | Kills running processes, deletes install directory, and purges all leftover files and registry entries |
+
 ##  Screenshots
 
 ### Banner
@@ -180,7 +214,7 @@ nightmare clean --all -y
 ║              ██║ ╚████║██║╚██████╔╝██║  ██║   ██║             ║
 ║              ╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝             ║
 ║                                                               ║
-║              NIGHTMARE CLEANER & OPTIMIZER v1.2.0             ║
+║              NIGHTMARE CLEANER & OPTIMIZER v1.3.0             ║
 ║              Windows System Cleaner and Optimizer             ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
@@ -196,6 +230,8 @@ nightmare-cleaner/
 │   ├── __init__.py              # Package initialization
 │   ├── cli.py                   # Main CLI interface
 │   ├── ui.py                    # UI utilities and theming
+│   ├── security.py              # Path validation and input sanitization
+│   ├── audit_logger.py          # Audit logging for all operations
 │   ├── system_info.py           # System information utilities
 │   └── modules/
 │       ├── __init__.py              # Base cleaning module
@@ -214,7 +250,8 @@ nightmare-cleaner/
 │       ├── store_cache.py           # Windows Store cache cleaner
 │       ├── memory_cleaner.py        # RAM working-set flusher
 │       ├── font_cache.py            # Font cache cleaner
-│       └── cdrive_cleaner.py        # C:\ drive root junk cleaner
+│       ├── cdrive_cleaner.py        # C:\ drive root junk cleaner
+│       └── uninstaller.py           # Program uninstaller module
 ├── setup.py                     # Setup configuration
 ├── pyproject.toml              # Project metadata
 ├── requirements.txt            # Dependencies
@@ -264,6 +301,10 @@ class MyCustomCleaner(CleaningModule):
 - **Administrator Detection**: Warns when not running with elevated privileges
 - **Error Handling**: Graceful handling of permission errors and file locks
 - **Confirmation Prompts**: Asks for confirmation before destructive operations
+- **Path Validation**: All file deletions pass through `security.is_safe_path()` checks
+- **Audit Logging**: Every deletion and registry operation is logged with timestamps
+- **Protected Programs**: The uninstaller blocks removal of critical system components:
+  `Python, pip, Nightmare, Windows, Microsoft, .NET, Visual C++, DirectX, NVIDIA/AMD/Intel Drivers`
 
 ##  Requirements
 

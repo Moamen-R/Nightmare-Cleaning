@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="nightmare-cleaner",
-    version="1.1.0",
+    version="1.3.0",
     author="Moamen-R",
     description="A modular, high-performance Windows Cleaner and Optimizer CLI tool",
     long_description=long_description,
