@@ -5,6 +5,7 @@ A modular, high-performance Windows Cleaner and Optimizer CLI tool built with Py
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-purple.svg)
 ![Platform](https://img.shields.io/badge/platform-Windows-lightgrey.svg)
+![Version](https://img.shields.io/badge/version-1.2.0-brightgreen.svg)
 
 ##  Features
 
@@ -21,21 +22,24 @@ A modular, high-performance Windows Cleaner and Optimizer CLI tool built with Py
 
 Nightmare Cleaner includes the following cleaning modules:
 
-| Module | Description |
-|--------|-------------|
-| **windows-temp** | Windows system temporary files |
-| **user-temp** | User temporary files and folders |
-| **browser** | Browser cache and temporary internet files (Chrome, Edge, Firefox) |
-| **windows-update** | Windows Update cache |
-| **prefetch** | Windows Prefetch files |
-| **recycle** | Recycle Bin contents |
-| **error-reports** | Windows Error Reports |
-| **thumbnails** | Windows thumbnail cache |
-| **logs** | Windows Log files |
-| **delivery-optimization** | Delivery Optimization cache |
-| **disk-cleanup** | Run Windows Disk Cleanup utility |
-| **dns-cache** | Clear DNS cache |
-| **store-cache** | Windows Store cache |
+| Module | Description | Requires Admin |
+|--------|-------------|:--------------:|
+| **windows-temp** | Windows system temporary files | ✅ |
+| **user-temp** | User temporary files and folders | ❌ |
+| **browser** | Browser cache (Chrome, Edge, Firefox) | ❌ |
+| **windows-update** | Windows Update cache | ✅ |
+| **prefetch** | Windows Prefetch files | ✅ |
+| **recycle** | Recycle Bin contents | ✅ |
+| **error-reports** | Windows Error Reports | ❌ |
+| **thumbnails** | Windows thumbnail cache | ❌ |
+| **logs** | Windows Log files | ✅ |
+| **delivery-optimization** | Delivery Optimization cache | ❌ |
+| **disk-cleanup** | Run Windows Disk Cleanup utility | ✅ |
+| **dns-cache** | Clear DNS resolver cache | ✅ |
+| **store-cache** | Windows Store cache | ❌ |
+| **memory** | Flush working-set memory to free RAM | ❌ |
+| **font-cache** | Windows font cache files | ❌ |
+| **cdrive** | C:\ drive root junk (Windows.old, installer dumps, driver leftovers) | ✅ |
 
 ##  Installation
 
@@ -176,7 +180,7 @@ nightmare clean --all -y
 ║              ██║ ╚████║██║╚██████╔╝██║  ██║   ██║             ║
 ║              ╚═╝  ╚═══╝╚═╝ ╚═════╝ ╚═╝  ╚═╝   ╚═╝             ║
 ║                                                               ║
-║              NIGHTMARE CLEANER & OPTIMIZER v1.1.0             ║
+║              NIGHTMARE CLEANER & OPTIMIZER v1.2.0             ║
 ║              Windows System Cleaner and Optimizer             ║
 ║                                                               ║
 ╚═══════════════════════════════════════════════════════════════╝
@@ -194,20 +198,23 @@ nightmare-cleaner/
 │   ├── ui.py                    # UI utilities and theming
 │   ├── system_info.py           # System information utilities
 │   └── modules/
-│       ├── __init__.py          # Base cleaning module
-│       ├── windows_temp.py      # Windows temp files cleaner
-│       ├── user_temp.py         # User temp files cleaner
-│       ├── browser_cache.py     # Browser cache cleaner
-│       ├── windows_update.py    # Windows Update cache cleaner
-│       ├── prefetch.py          # Prefetch cleaner
-│       ├── recycle_bin.py       # Recycle bin cleaner
-│       ├── error_reports.py     # Error reports cleaner
-│       ├── thumbnail_cache.py   # Thumbnail cache cleaner
-│       ├── windows_logs.py      # Windows logs cleaner
-│       ├── delivery_optimization.py  # Delivery Optimization cleaner
-│       ├── disk_cleanup.py      # Disk Cleanup utility runner
-│       ├── dns_cache.py         # DNS cache cleaner
-│       └── store_cache.py       # Windows Store cache cleaner
+│       ├── __init__.py              # Base cleaning module
+│       ├── windows_temp.py          # Windows temp files cleaner
+│       ├── user_temp.py             # User temp files cleaner
+│       ├── browser_cache.py         # Browser cache cleaner
+│       ├── windows_update.py        # Windows Update cache cleaner
+│       ├── prefetch.py              # Prefetch cleaner
+│       ├── recycle_bin.py           # Recycle bin cleaner
+│       ├── error_reports.py         # Error reports cleaner
+│       ├── thumbnail_cache.py       # Thumbnail cache cleaner
+│       ├── windows_logs.py          # Windows logs cleaner
+│       ├── delivery_optimization.py # Delivery Optimization cleaner
+│       ├── disk_cleanup.py          # Disk Cleanup utility runner
+│       ├── dns_cache.py             # DNS cache cleaner
+│       ├── store_cache.py           # Windows Store cache cleaner
+│       ├── memory_cleaner.py        # RAM working-set flusher
+│       ├── font_cache.py            # Font cache cleaner
+│       └── cdrive_cleaner.py        # C:\ drive root junk cleaner
 ├── setup.py                     # Setup configuration
 ├── pyproject.toml              # Project metadata
 ├── requirements.txt            # Dependencies
