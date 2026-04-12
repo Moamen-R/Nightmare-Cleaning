@@ -579,11 +579,25 @@ def uninstall(search, yes):
 
 
 def _display_program_table(programs):
-    """Display installed programs in a numbered Rich table."""
-    table = create_table(
-        "Installed Programs",
-        ["#", "Program Name", "Publisher", "Size", "Version"],
+    """Display installed programs in a numbered Rich table, responsive to terminal width."""
+    from rich.table import Table
+    from rich import box
+
+    table = Table(
+        title="Installed Programs",
+        box=box.DOUBLE_EDGE,
+        title_style="title",
+        header_style="bright_magenta bold",
+        border_style="magenta",
+        expand=True,
+        show_lines=False,
     )
+
+    table.add_column("#", style="bright_cyan", no_wrap=True, width=5)
+    table.add_column("Program Name", style="bright_cyan", max_width=35, overflow="ellipsis", no_wrap=True)
+    table.add_column("Publisher", style="bright_cyan", max_width=25, overflow="ellipsis", no_wrap=True)
+    table.add_column("Size", style="bright_cyan", no_wrap=True, width=10, justify="right")
+    table.add_column("Version", style="bright_cyan", max_width=15, overflow="ellipsis", no_wrap=True)
 
     for idx, prog in enumerate(programs, 1):
         table.add_row(
