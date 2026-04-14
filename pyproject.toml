@@ -10,8 +10,8 @@ readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Moamen-R", email = "moamen@example.com"},
-    {name = "Mahmoud Osama", email = "mahmoud@example.com"}
+    {name = "Mahmoud-O", email = "mahmoud4h5@gmail.com"}
+    {name = "Moamen-R", email = "moamen.refaey.dev@gmail.com"},
 ]
 keywords = ["windows", "cleaner", "optimizer", "cli", "system-tools", "security", "cache"]
 classifiers = [
@@ -35,3 +35,6 @@ nightmare = "nightmare_cleaner.cli:main"
 [project.urls]
 Homepage = "https://github.com/Moamen-R/Nightmare-Cleaning"
 Repository = "https://github.com/Moamen-R/Nightmare-Cleaning"
+
+
+

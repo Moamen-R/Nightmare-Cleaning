@@ -44,9 +44,17 @@ Nightmare Cleaner includes the following cleaning modules:
 
 ##  Installation
 
-### One-Command Installation (Recommended)
+### Install via PyPI (Recommended)
 
-To install Nightmare Cleaner with a single command, open an Administrator prompt (CMD or PowerShell) in the root directory:
+You can install the package directly from PyPI using pip:
+
+```bash
+pip install nightmare-cleaner
+```
+
+### Local One-Command Installation
+
+To install from the source directory with a single command, open an Administrator prompt (CMD or PowerShell) in the root directory:
 
 ```cmd
 install.bat
@@ -58,17 +66,15 @@ Alternatively, using PowerShell:
 .\install.ps1 -InstallPython
 ```
 
-### Manual Installation
+### Manual Source Installation
 
 ```bash
 # Clone the repository
 git clone https://github.com/Moamen-R/Nightmare-Cleaning.git
 cd Nightmare-Cleaning
 
-# Install dependencies
+# Install dependencies and the package
 pip install -r requirements.txt
-
-# Install the package
 pip install -e .
 ```
 
