@@ -6,7 +6,6 @@ on:
     paths:
       - "pyproject.toml"
       - "setup.py"
-      - "nightmare_cleaner/**"
       - ".github/workflows/publish-to-pypi.yml"
   release:
     types: [published]
@@ -35,10 +34,36 @@ jobs:
     - name: Build package
       run: |
         python -m build
+
+    - name: Ensure version is not already published
+      run: |
+        python - <<'PY'
+        import json
+        import urllib.error
+        import urllib.request
+        import tomllib
+        from pathlib import Path
+
+        version = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
+        package = "nightmare-cleaner"
+        url = f"https://pypi.org/pypi/{package}/json"
+
+        try:
+            with urllib.request.urlopen(url) as response:
+                data = json.load(response)
+        except urllib.error.HTTPError as exc:
+            if exc.code == 404:
+                raise SystemExit(0)
+            raise
+
+        existing = data.get("releases", {}).get(version, [])
+        if existing:
+            raise SystemExit(f"Version {version} is already published on PyPI. Bump the version before publishing.")
+        PY
         
     - name: Publish to PyPI
       env:
         TWINE_USERNAME: __token__
         TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
       run: |
-        twine upload --skip-existing dist/*
+        twine upload dist/*
