@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "nightmare-cleaner"
-version = "2.0.0"
+version = "2.0.1"
 description = "A modular, high-performance Windows Cleaner and Optimizer CLI tool"
 readme = "README.md"
 requires-python = ">=3.8"
 license = {text = "MIT"}
 authors = [
-    {name = "Mahmoud-O", email = "mahmoud4h5@gmail.com"}
+    {name = "Mahmoud-O", email = "mahmoud4h5@gmail.com"},
     {name = "Moamen-R", email = "moamen.refaey.dev@gmail.com"},
 ]
 keywords = ["windows", "cleaner", "optimizer", "cli", "system-tools", "security", "cache"]
