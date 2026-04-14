@@ -59,7 +59,7 @@ jobs:
 
         existing = data.get("releases", {}).get(version, [])
         if existing:
-            raise SystemExit(f"Version {version} is already published on PyPI. Bump the version before publishing.")
+            raise SystemExit(f"Error: Version {version} is already published on PyPI. Please bump the version before publishing.")
         PY
         
     - name: Publish to PyPI
