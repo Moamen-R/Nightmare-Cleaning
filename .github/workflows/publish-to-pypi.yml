@@ -44,8 +44,9 @@ jobs:
         import tomllib
         from pathlib import Path
 
-        version = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]["version"]
-        package = "nightmare-cleaner"
+        project = tomllib.loads(Path("pyproject.toml").read_text(encoding="utf-8"))["project"]
+        package = project["name"]
+        version = project["version"]
         url = f"https://pypi.org/pypi/{package}/json"
 
         try:
